@@ -34,7 +34,6 @@ func NewDict() (d *Dict) {
 			fmt.Fprintf(os.Stderr, "Failed to initialise keys: %v\n", err)
 			os.Exit(1)
 		}
-		fmt.Fprintln(os.Stdout, "Initialised new keystore") //nolint:errcheck
 	}
 
 	return

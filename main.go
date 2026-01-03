@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/adreasnow/keychain-cli/keys"
@@ -31,7 +32,7 @@ func main() {
 					&cli.StringArg{Name: "key", Destination: &key},
 					&cli.StringArg{Name: "secret", Destination: &secret},
 				},
-				Action: func(ctx context.Context, cmd *cli.Command) error {
+				Action: func(_ context.Context, _ *cli.Command) error {
 					return set(key, secret)
 				},
 			},
@@ -41,10 +42,10 @@ func main() {
 				Arguments: []cli.Argument{
 					&cli.StringArg{Name: "key", Destination: &key},
 				},
-				Action: func(ctx context.Context, cmd *cli.Command) error {
+				Action: func(_ context.Context, _ *cli.Command) error {
 					return get(key)
 				},
-				ShellComplete: func(ctx context.Context, cmd *cli.Command) { completion() },
+				ShellComplete: func(_ context.Context, cmd *cli.Command) { completion(cmd) },
 			},
 
 			{
@@ -53,10 +54,10 @@ func main() {
 				Arguments: []cli.Argument{
 					&cli.StringArg{Name: "key", Destination: &key},
 				},
-				Action: func(ctx context.Context, cmd *cli.Command) error {
+				Action: func(_ context.Context, _ *cli.Command) error {
 					return delete(key)
 				},
-				ShellComplete: func(ctx context.Context, cmd *cli.Command) { completion() },
+				ShellComplete: func(_ context.Context, cmd *cli.Command) { completion(cmd) },
 			},
 		},
 	}
@@ -126,13 +127,20 @@ func delete(key string) error {
 	return nil
 }
 
-func completion() {
+func completion(cmd *cli.Command) {
 	var dict = keys.NewDict()
 
 	keys, err := dict.GetAllKeys()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to get keys: %v\n", err)
 		os.Exit(1)
+	}
+
+	args := cmd.Args().Slice()
+	for _, key := range keys {
+		if slices.Contains(args, key) {
+			return
+		}
 	}
 
 	for _, key := range keys {
