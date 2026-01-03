@@ -11,14 +11,13 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-var dict = keys.NewDict()
-
 var (
 	ErrMissingKey    = errors.New("missing key")
 	ErrMissingSecret = errors.New("missing secret")
 )
 
 func main() {
+	var dict = keys.NewDict()
 	var key string
 	var secret string
 
@@ -34,7 +33,7 @@ func main() {
 					&cli.StringArg{Name: "secret", Destination: &secret},
 				},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
-					return set(key, secret)
+					return set(key, secret, dict)
 				},
 			},
 			{
@@ -44,9 +43,9 @@ func main() {
 					&cli.StringArg{Name: "key", Destination: &key},
 				},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
-					return get(key)
+					return get(key, dict)
 				},
-				ShellComplete: completion,
+				ShellComplete: func(ctx context.Context, cmd *cli.Command) { completion(dict) },
 			},
 
 			{
@@ -56,9 +55,9 @@ func main() {
 					&cli.StringArg{Name: "key", Destination: &key},
 				},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
-					return delete(key)
+					return delete(key, dict)
 				},
-				ShellComplete: completion,
+				ShellComplete: func(ctx context.Context, cmd *cli.Command) { completion(dict) },
 			},
 		},
 	}
@@ -76,7 +75,7 @@ func obfuscate(secret string) string {
 	return out.String()
 }
 
-func set(key, secret string) error {
+func set(key, secret string, dict *keys.Dict) error {
 	if key == "" {
 		return ErrMissingKey
 	}
@@ -94,7 +93,7 @@ func set(key, secret string) error {
 	return nil
 }
 
-func get(key string) error {
+func get(key string, dict *keys.Dict) error {
 	if key == "" {
 		return ErrMissingKey
 	}
@@ -108,7 +107,7 @@ func get(key string) error {
 	return nil
 }
 
-func delete(key string) error {
+func delete(key string, dict *keys.Dict) error {
 	if key == "" {
 		return ErrMissingKey
 	}
@@ -122,7 +121,7 @@ func delete(key string) error {
 	return nil
 }
 
-func completion(ctx context.Context, cmd *cli.Command) {
+func completion(dict *keys.Dict) {
 	keys, err := dict.GetAllKeys()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to get keys: %v\n", err)

@@ -26,9 +26,9 @@ func TestObfuscate(t *testing.T) {
 func TestSet(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		keyring.MockInit()
-		dict = keys.NewDict()
+		dict := keys.NewDict()
 
-		err := set("testKey", "testSecret")
+		err := set("testKey", "testSecret", dict)
 		assert.NoError(t, err)
 
 		keys, err := dict.GetAllKeys()
@@ -39,17 +39,17 @@ func TestSet(t *testing.T) {
 
 	t.Run("missing key", func(t *testing.T) {
 		keyring.MockInit()
-		dict = keys.NewDict()
+		dict := keys.NewDict()
 
-		err := set("", "testSecret")
+		err := set("", "testSecret", dict)
 		assert.ErrorIs(t, err, ErrMissingKey)
 	})
 
 	t.Run("missing secret", func(t *testing.T) {
 		keyring.MockInit()
-		dict = keys.NewDict()
+		dict := keys.NewDict()
 
-		err := set("testKey", "")
+		err := set("testKey", "", dict)
 		assert.ErrorIs(t, err, ErrMissingSecret)
 	})
 }
@@ -57,14 +57,14 @@ func TestSet(t *testing.T) {
 func TestGet(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		keyring.MockInit()
-		dict = keys.NewDict()
+		dict := keys.NewDict()
 
 		key := "testKey"
 		secret := "testSecret"
 		err := dict.SetSecret(key, secret)
 		require.NoError(t, err)
 
-		err = get(key)
+		err = get(key, dict)
 		assert.NoError(t, err)
 
 		keys, err := dict.GetAllKeys()
@@ -74,9 +74,9 @@ func TestGet(t *testing.T) {
 
 	t.Run("missing key", func(t *testing.T) {
 		keyring.MockInit()
-		dict = keys.NewDict()
+		dict := keys.NewDict()
 
-		err := get("")
+		err := get("", dict)
 		assert.ErrorIs(t, err, ErrMissingKey)
 	})
 }
@@ -84,14 +84,14 @@ func TestGet(t *testing.T) {
 func TestDelete(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		keyring.MockInit()
-		dict = keys.NewDict()
+		dict := keys.NewDict()
 
 		key := "testKey"
 		secret := "testSecret"
 		err := dict.SetSecret(key, secret)
 		require.NoError(t, err)
 
-		err = delete(key)
+		err = delete(key, dict)
 		assert.NoError(t, err)
 
 		keys, err := dict.GetAllKeys()
@@ -101,9 +101,9 @@ func TestDelete(t *testing.T) {
 
 	t.Run("missing key", func(t *testing.T) {
 		keyring.MockInit()
-		dict = keys.NewDict()
+		dict := keys.NewDict()
 
-		err := delete("")
+		err := delete("", dict)
 		assert.ErrorIs(t, err, ErrMissingKey)
 	})
 }

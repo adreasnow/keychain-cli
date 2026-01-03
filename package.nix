@@ -4,7 +4,7 @@
   # rather than buildGoLatestModule.
   # This can be bumped when the release notes of golangci-lint detail support for
   # new version of go.
-  buildGo125Module,
+  buildGoModule,
   buildPackages,
   fetchFromGitHub,
   installShellFiles,
@@ -12,7 +12,7 @@
   stdenv,
 }:
 
-buildGo125Module (finalAttrs: {
+buildGoModule (finalAttrs: {
   pname = "keychain-cli";
   version = "2026.1.4";
 
@@ -22,20 +22,13 @@ buildGo125Module (finalAttrs: {
     tag = "v${finalAttrs.version}";
     hash = "sha256-6Q3p74mBHRVzFnnVGq3MQ/sDYnADMkKXlbg0TbCG0jA=";
   };
-
   vendorHash = "sha256-BmcA7S8dNSPjvM/x/MXaL5SBbccvZYEhJUHi+Txdt6s=";
 
-  subPackages = [ "keychain-cli" ];
+  ldflags = [ "-s -w -X main.version=${finalAttrs.version}" ];
 
   nativeBuildInputs = [ installShellFiles ];
 
-  ldflags = [
-    "-s"
-    "-w"
-    "-X main.version=${finalAttrs.version}"
-    "-X main.commit=v${finalAttrs.version}"
-    "-X main.date=1970-01-01T00:00:00Z"
-  ];
+  CGO_ENABLED = 0;
 
   postInstall =
     let

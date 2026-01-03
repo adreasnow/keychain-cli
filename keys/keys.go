@@ -48,7 +48,7 @@ func (d *Dict) loadKeys() (err error) {
 
 	err = json.Unmarshal([]byte(keyString), &d.keys)
 	if err != nil {
-		return fmt.Errorf("failed to unmarshal keys: %w", err)
+		return fmt.Errorf("failed to unmarshal keys %s: %w", keyString, err)
 	}
 
 	return nil
