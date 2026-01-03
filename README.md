@@ -1,6 +1,6 @@
 # MacOS Keychain CLI
 
-![Build Status](https://github.com/adreasnow/keychain-cli/actions/workflows/publish.yaml/badge.svg?branch=main)](https://github.com/adreasnow/keychain-cli/actions/workflows/publish.yaml) [![Go Coverage](https://github.com/adreasnow/keychain-cli/wiki/coverage.svg)](https://raw.githack.com/wiki/adreasnow/keychain-cli/coverage.html)
+[![Build Status](https://github.com/adreasnow/keychain-cli/actions/workflows/publish.yaml/badge.svg?branch=main)](https://github.com/adreasnow/keychain-cli/actions/workflows/publish.yaml) ![Go Coverage](https://github.com/adreasnow/keychain-cli/wiki/coverage.svg)
 
 This project is a very simple command-line interface for managing secrets with the MacOS Keychain.
 
