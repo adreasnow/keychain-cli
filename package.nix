@@ -23,6 +23,8 @@ buildGo125Module (finalAttrs: {
     hash = "sha256-u1ksBUPlbOsbBrt1+THWpowzNZwEG/XCCOOBAqr18K0=";
   };
 
+  vendorHash = "sha256-BmcA7S8dNSPjvM/x/MXaL5SBbccvZYEhJUHi+Txdt6s=";
+
   subPackages = [ "keychain-cli" ];
 
   nativeBuildInputs = [ installShellFiles ];
@@ -41,7 +43,7 @@ buildGo125Module (finalAttrs: {
         if stdenv.buildPlatform.canExecute stdenv.hostPlatform then
           "$out"
         else
-          lib.getBin buildPackages.golangci-lint;
+          lib.getBin buildPackages.keychain-cli;
     in
     ''
       installShellCompletion --cmd keychain-cli \

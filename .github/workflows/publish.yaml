@@ -48,6 +48,20 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v12
 
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: "go.mod"
+
+      - name: Generate Vendor folder
+        run: |
+          go mod tidy
+          go mod vendor
+
+      - name: Generate vendor hash
+        run: |
+          echo "VENDOR_HASH=$(nix hash path ./vendor )" >> $GITHUB_ENV
+
       - name: Get new hash
         id: hash
         run: |
@@ -66,7 +80,7 @@ jobs:
       - name: Update Nix Package
         uses: actions/github-script@v6
         env:
-          NEW_VERSION: ${{ needs.tag.outputs.version }}
+          NEW_VERSION: ${{ needs.tag.outputs.version }}VENDOR_HASH
         with:
           script: |
             const fs = require("fs");
@@ -75,9 +89,11 @@ jobs:
 
             const version = process.env.NEW_VERSION;
             const hash = process.env.NEW_HASH;
+            const vendorHash = process.env.VENDOR_HASH;
 
             content = content.replace(/version = ".*?";/, `version = "${version}";`);
             content = content.replace(/hash = "sha256-.*?";/, `hash = "${hash}";`);
+            content = content.replace(/vendorHash = ".*?";/, `vendorHash = "${vendorHash}";`);
 
             fs.writeFileSync("package.nix", content, "utf8");
 
@@ -85,4 +101,3 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "[AUTOMATED] Update package.nix for tag ${{ steps.tag.outputs.version }}"
-          file_pattern: package.nix
