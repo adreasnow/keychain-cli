@@ -28,8 +28,6 @@ buildGoModule (finalAttrs: {
 
   nativeBuildInputs = [ installShellFiles ];
 
-  CGO_ENABLED = 0;
-
   postInstall =
     let
       keychainCLIBin =
@@ -39,6 +37,7 @@ buildGoModule (finalAttrs: {
           lib.getBin buildPackages.keychain-cli;
     in
     ''
+      ls -lah ${keychainCLIBin}/bin/
       installShellCompletion --cmd keychain-cli \
         --bash <(${keychainCLIBin}/bin/keychain-cli completion bash) \
         --fish <(${keychainCLIBin}/bin/keychain-cli completion fish) \

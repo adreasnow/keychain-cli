@@ -28,7 +28,7 @@ func TestSet(t *testing.T) {
 		keyring.MockInit()
 		dict := keys.NewDict()
 
-		err := set("testKey", "testSecret", dict)
+		err := set("testKey", "testSecret")
 		assert.NoError(t, err)
 
 		keys, err := dict.GetAllKeys()
@@ -39,17 +39,15 @@ func TestSet(t *testing.T) {
 
 	t.Run("missing key", func(t *testing.T) {
 		keyring.MockInit()
-		dict := keys.NewDict()
 
-		err := set("", "testSecret", dict)
+		err := set("", "testSecret")
 		assert.ErrorIs(t, err, ErrMissingKey)
 	})
 
 	t.Run("missing secret", func(t *testing.T) {
 		keyring.MockInit()
-		dict := keys.NewDict()
 
-		err := set("testKey", "", dict)
+		err := set("testKey", "")
 		assert.ErrorIs(t, err, ErrMissingSecret)
 	})
 }
@@ -64,7 +62,7 @@ func TestGet(t *testing.T) {
 		err := dict.SetSecret(key, secret)
 		require.NoError(t, err)
 
-		err = get(key, dict)
+		err = get(key)
 		assert.NoError(t, err)
 
 		keys, err := dict.GetAllKeys()
@@ -74,9 +72,8 @@ func TestGet(t *testing.T) {
 
 	t.Run("missing key", func(t *testing.T) {
 		keyring.MockInit()
-		dict := keys.NewDict()
 
-		err := get("", dict)
+		err := get("")
 		assert.ErrorIs(t, err, ErrMissingKey)
 	})
 }
@@ -91,9 +88,10 @@ func TestDelete(t *testing.T) {
 		err := dict.SetSecret(key, secret)
 		require.NoError(t, err)
 
-		err = delete(key, dict)
+		err = delete(key)
 		assert.NoError(t, err)
 
+		dict = keys.NewDict()
 		keys, err := dict.GetAllKeys()
 		assert.NoError(t, err)
 		assert.Len(t, keys, 0)
@@ -101,9 +99,8 @@ func TestDelete(t *testing.T) {
 
 	t.Run("missing key", func(t *testing.T) {
 		keyring.MockInit()
-		dict := keys.NewDict()
 
-		err := delete("", dict)
+		err := delete("")
 		assert.ErrorIs(t, err, ErrMissingKey)
 	})
 }

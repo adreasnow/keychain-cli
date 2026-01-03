@@ -17,7 +17,6 @@ var (
 )
 
 func main() {
-	var dict = keys.NewDict()
 	var key string
 	var secret string
 
@@ -33,7 +32,7 @@ func main() {
 					&cli.StringArg{Name: "secret", Destination: &secret},
 				},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
-					return set(key, secret, dict)
+					return set(key, secret)
 				},
 			},
 			{
@@ -43,9 +42,9 @@ func main() {
 					&cli.StringArg{Name: "key", Destination: &key},
 				},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
-					return get(key, dict)
+					return get(key)
 				},
-				ShellComplete: func(ctx context.Context, cmd *cli.Command) { completion(dict) },
+				ShellComplete: func(ctx context.Context, cmd *cli.Command) { completion() },
 			},
 
 			{
@@ -55,9 +54,9 @@ func main() {
 					&cli.StringArg{Name: "key", Destination: &key},
 				},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
-					return delete(key, dict)
+					return delete(key)
 				},
-				ShellComplete: func(ctx context.Context, cmd *cli.Command) { completion(dict) },
+				ShellComplete: func(ctx context.Context, cmd *cli.Command) { completion() },
 			},
 		},
 	}
@@ -75,7 +74,9 @@ func obfuscate(secret string) string {
 	return out.String()
 }
 
-func set(key, secret string, dict *keys.Dict) error {
+func set(key, secret string) error {
+	var dict = keys.NewDict()
+
 	if key == "" {
 		return ErrMissingKey
 	}
@@ -93,7 +94,9 @@ func set(key, secret string, dict *keys.Dict) error {
 	return nil
 }
 
-func get(key string, dict *keys.Dict) error {
+func get(key string) error {
+	var dict = keys.NewDict()
+
 	if key == "" {
 		return ErrMissingKey
 	}
@@ -107,7 +110,9 @@ func get(key string, dict *keys.Dict) error {
 	return nil
 }
 
-func delete(key string, dict *keys.Dict) error {
+func delete(key string) error {
+	var dict = keys.NewDict()
+
 	if key == "" {
 		return ErrMissingKey
 	}
@@ -121,7 +126,9 @@ func delete(key string, dict *keys.Dict) error {
 	return nil
 }
 
-func completion(dict *keys.Dict) {
+func completion() {
+	var dict = keys.NewDict()
+
 	keys, err := dict.GetAllKeys()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to get keys: %v\n", err)
